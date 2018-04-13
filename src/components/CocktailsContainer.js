@@ -9,23 +9,10 @@ class CocktailsContainer extends React.Component {
     super()
     this.state = {
       cocktails: [],
-      currentCocktail: [],
+      currentCocktail: '',
       cocktailClicked: false,
-      form: {
-        name: '',
-        description: '',
-        instructions: '',
-        // proportions: [
-        //   {
-        //     ingredient_name: '',
-        //     ingredient_proportion: ''
-        // }
-        // ]
-      }
       }
     }
-
-
 
 
   componentDidMount = () => {
@@ -58,42 +45,15 @@ class CocktailsContainer extends React.Component {
     return <CocktailInfoPage cocktail={this.state.currentCocktail} />
   }
 
-  // handleSubmitForm = (e) => {
-  //   e.preventDefault()
-  //   debugger
-  //   console.log(this.props.state.form)
-  //   console.log("im inside of handle submit form!!")
-  // //   fetch('http://localhost:3000/api/v1/cocktails',
-  // //     method: "POST",
-  // //     body: JSON.stringify(this.props.state.form),
-  // //     headers: ({
-  // //   'Content-Type': 'application/json'
-  // // })
-  // // )
-  // }
+  addDrinkToList = (drink) => {
+  
+    this.setState({
+      cocktails: [...this.state.cocktails, drink]
+    },   console.log(this.state.cocktails[this.state.cocktails.length - 1]))
 
-  // handleInputChange = (e) => {
-  //   // console.log(this.state.form)
-  //   this.setState({
-  //     form: {
-  //       ...this.state.form,
-  //       [e.target.name]: e.target.value
-  //     }
-  //   })
-  // }
+  }
 
-  // handleNestedInputChange = (e) => {
-  //   // console.log(this.state.form.proportions)
-  //   this.setState({
-  //     form: {
-  //       ...this.state.form,
-  //       proportions: [
-  //         ...this.state.form.proportions,
-  //         [e.target.name]: e.target.value
-  //       ]
-  //     }
-  //   })
-  // }
+
 
   render(){
     return(
@@ -107,7 +67,7 @@ class CocktailsContainer extends React.Component {
         </div>
         </Router>
         <div className="three">
-          <AddCocktailForm state={this.state} /*handleNestedInputChange={this.handleNestedInputChange} /*handleInputChange={this.handleInputChange}*/ /*handleSubmitForm={this.handleSubmitForm}*//>
+          <AddCocktailForm addDrinkToList={this.addDrinkToList} state={this.state} /*handleNestedInputChange={this.handleNestedInputChange} /*handleInputChange={this.handleInputChange}*/ /*handleSubmitForm={this.handleSubmitForm}*//>
         </div>
       </div>
     )

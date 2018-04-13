@@ -5,29 +5,39 @@ class AddCocktailForm extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      name: '',
-      description: '',
-      instructions: '',
+      form: {
+        name: '',
+        description: '',
+        instructions: ''
+      },
       proportionsNum: 1
     }
   }
 
   renderProportions = () => {
-    
+    let proportionsNum = this.state.proportionsNum
+    let allProportions = []
+    for(let i = 0; i < proportionsNum; i++){
+      allProportions.push(<FormProportions />)
+    }
+    return allProportions
   }
 
   addAnotherProportion = (e) => {
     e.preventDefault()
     this.setState({
-      proportions: [...this.state.proportions, <FormProportions state={this.props.state.form} onChange={this.props.handleProportionInputChange}/>]
+      proportionsNum: this.state.proportionsNum + 1
     })
+    console.log(this.state.proportionsNum)
   }
 
   handleInputChange = (e) => {
     console.log(this.state)
     this.setState({
-
-        [e.target.name]: e.target.value
+        form: {
+          ...this.state.form,
+          [e.target.name]: e.target.value
+        }
     })
   }
 
@@ -40,15 +50,20 @@ class AddCocktailForm extends React.Component {
 
   handleSubmitForm = (e) => {
     e.preventDefault()
-    console.log(this.state.proportions[0])
-    console.log("im inside of handle submit form!!")
-  //   fetch('http://localhost:3000/api/v1/cocktails',
-  //     method: "POST",
-  //     body: JSON.stringify(this.props.state.form),
-  //     headers: ({
-  //   'Content-Type': 'application/json'
-  // })
-  // )
+    let self = this.state.form
+    // let addDrinkToListFunc = this.props.addDrinkToList()
+    // console.log("im inside of handle submit form!!")
+    // console.log(this.state.form)
+    // this.props.addDrinkToList((json[json.length - 1]))
+    fetch('http://localhost:3000/api/v1/cocktails', {
+      method: "POST",
+      body: JSON.stringify(self),
+      headers: ({
+        'Content-Type': 'application/json'
+      })
+    }
+  ).then(resp => resp.json())
+  .then(json => this.props.addDrinkToList(json[json.length-1]))
   }
 
 
@@ -57,7 +72,7 @@ class AddCocktailForm extends React.Component {
     return(
       <div>
         <h2>Create A Cocktail</h2>
-        <form >
+        <form onSubmit={this.handleSubmitForm}>
           <label>Name</label>
           <br/>
           <input onChange={this.handleInputChange} type='text' name='name' value={this.state.name}/>
@@ -75,7 +90,7 @@ class AddCocktailForm extends React.Component {
             {this.renderProportions()}
           </div>
           <button onClick={this.addAnotherProportion}>+</button>
-          <input onClick={this.handleSubmitForm} type='submit' text="Create Cocktail"/>
+          <input type='submit' text="Create Cocktail"/>
         </form>
       </div>
     )
