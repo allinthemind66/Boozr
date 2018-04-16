@@ -8,9 +8,15 @@ class AddCocktailForm extends React.Component {
       form: {
         name: '',
         description: '',
-        instructions: ''
+        instructions: '',
+        proportions: [
+          {
+            ingredient_name: '',
+            amount: ''
+          },
+        ]
       },
-      proportionsNum: 1
+      // proportIngreionsNum: 1
     }
   }
 
@@ -18,7 +24,7 @@ class AddCocktailForm extends React.Component {
     let proportionsNum = this.state.proportionsNum
     let allProportions = []
     for(let i = 0; i < proportionsNum; i++){
-      allProportions.push(<FormProportions />)
+      allProportions.push(<FormProportions onChange={this.handleProportionInputChange}/>)
     }
     return allProportions
   }
@@ -26,9 +32,10 @@ class AddCocktailForm extends React.Component {
   addAnotherProportion = (e) => {
     e.preventDefault()
     this.setState({
-      proportionsNum: this.state.proportionsNum + 1
+      proportions: this.state.form.proportions.push({ ingredient_name: '',
+      amount: '' }),
     })
-    console.log(this.state.proportionsNum)
+    console.log(this.state.form.proportions)
   }
 
   handleInputChange = (e) => {
@@ -41,12 +48,25 @@ class AddCocktailForm extends React.Component {
     })
   }
 
-  handleProportionInputChange = (e) => {
-    // console.log(this.state.form.proportions)
-    this.setState({
-    [e.target.name]: e.target.value
-    })
+  // handleProportionInputChange = (e) => {
+  //   // console.log(this.state.form.proportions)
+  //   this.setState({
+  //     proportions: [
+  //       ...this.state.proportions,
+  //       [e.target.name]: e.target.value
+  //     ]
+  //   }, () => console.log(this.state.form.proportions))
+  // }
+
+  handleProportionInputChange = (idx) => (evt) => {
+    const newProportions = this.state.form.proportions.map((proportion, sidx) => {
+      if (idx !== sidx) return proportion;
+      return { ...proportion, [evt.target.name]: evt.target.value };
+    });
+
+    this.setState({form: {...this.state.form, proportions: newProportions }}, () => console.log(this.state.form));
   }
+
 
   handleSubmitForm = (e) => {
     e.preventDefault()
@@ -87,7 +107,24 @@ class AddCocktailForm extends React.Component {
           <br/>
           <h3>Proportions</h3>
           <div>
-            {this.renderProportions()}
+            {this.state.form.proportions.map((proportion, idx) => (
+          <div className="proportion">
+            <input
+              name="ingredient_name"
+              type="text"
+              placeholder={`proportion #${idx + 1} name`}
+              value={this.state.form.proportions.ingredient_name}
+              onChange={this.handleProportionInputChange(idx)}
+            />
+            <input
+              name="amount"
+              type="text"
+              placeholder={`proportion #${idx + 1} amount`}
+              value={this.state.form.proportions.amount}
+              onChange={this.handleProportionInputChange(idx)}
+            />
+          </div>
+        ))}
           </div>
           <button onClick={this.addAnotherProportion}>+</button>
           <input type='submit' text="Create Cocktail"/>
